@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}ダッシュボード | Modern Blog{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="mb-0">ダッシュボード</h1>
+    <p class="text-muted">自分の投稿を管理できます。</p>
+  </div>
+  <a href="{% url 'post_create' %}" class="btn btn-primary">新規投稿</a>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-hover align-middle">
+    <thead>
+      <tr>
+        <th>タイトル</th>
+        <th>ステータス</th>
+        <th>カテゴリ</th>
+        <th>タグ</th>
+        <th>更新日</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for post in posts %}
+      <tr>
+        <td><a href="{% url 'post_detail' post.slug %}">{{ post.title }}</a></td>
+        <td>
+          {% if post.status == 'published' %}
+          <span class="badge text-bg-success">公開</span>
+          {% else %}
+          <span class="badge text-bg-secondary">下書き</span>
+          {% endif %}
+        </td>
+        <td>{{ post.category.name }}</td>
+        <td>
+          {% for tag in post.tags.all %}
+          <span class="badge text-bg-light text-dark">{{ tag.name }}</span>
+          {% empty %}
+          <span class="text-muted">なし</span>
+          {% endfor %}
+        </td>
+        <td>{{ post.updated_at|date:"Y年m月d日 H:i" }}</td>
+        <td class="text-end">
+          <a href="{% url 'post_update' post.slug %}" class="btn btn-sm btn-outline-primary me-2">編集</a>
+          <a href="{% url 'post_delete' post.slug %}" class="btn btn-sm btn-outline-danger">削除</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6" class="text-center py-4">まだ投稿がありません。<a href="{% url 'post_create' %}">最初の投稿を作成しましょう。</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

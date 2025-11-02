@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if form.instance.pk %}投稿編集{% else %}新規投稿{% endif %} | Modern Blog{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <h1 class="mb-4">{% if form.instance.pk %}投稿を編集{% else %}新しい投稿を作成{% endif %}</h1>
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      <div class="row g-3">
+        {% for field in form %}
+        <div class="col-12">
+          <label class="form-label" for="id_{{ field.name }}">{{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}</label>
+          {{ field }}
+          {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+          {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+      <div class="mt-4 d-flex justify-content-between">
+        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">戻る</a>
+        <button type="submit" class="btn btn-primary">保存</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

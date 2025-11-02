@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }} | Modern Blog{% endblock %}
+
+{% block content %}
+<article class="row">
+  <div class="col-lg-8">
+    <h1 class="mb-3">{{ post.title }}</h1>
+    <div class="text-muted mb-3">
+      <span>{{ post.created_at|date:"Y年m月d日" }}</span>
+      <span class="ms-2">投稿者: {{ post.author.get_full_name|default:post.author.username }}</span>
+      <span class="ms-2">カテゴリ: <a href="{% url 'category_detail' post.category.slug %}">{{ post.category.name }}</a></span>
+    </div>
+    {% if post.featured_image %}
+    <img src="{{ post.featured_image.url }}" class="img-fluid rounded mb-4" alt="{{ post.title }}" />
+    {% endif %}
+    <div class="post-content">
+      {{ post.content|linebreaks }}
+    </div>
+    <div class="mt-4">
+      {% for tag in post.tags.all %}
+      <a href="{% url 'tag_detail' tag.slug %}" class="badge text-bg-primary me-1">{{ tag.name }}</a>
+      {% empty %}
+      <p class="text-muted">タグは設定されていません。</p>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card mb-4">
+      <div class="card-body">
+        <h2 class="h5">投稿操作</h2>
+        {% if request.user == post.author %}
+        <a href="{% url 'post_update' post.slug %}" class="btn btn-primary w-100 mb-2">編集</a>
+        <a href="{% url 'post_delete' post.slug %}" class="btn btn-outline-danger w-100">削除</a>
+        {% else %}
+        <p class="text-muted">作者のみ編集可能です。</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</article>
+{% endblock %}
